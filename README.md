@@ -9,11 +9,11 @@ O usuário cria uma conta, registra seus gastos com categoria, data e foto do re
 
 | Nome | GitHub | Responsabilidade |
 |------|--------|------------------|
-| Kaio Santos *(completar nome completo)* | [@KaioSantoss](https://github.com/KaioSantoss) | Base do projeto, tema e navegação |
-| Ygor Farias de Melo | [@Yguin77](https://github.com/Yguin77) | Firebase: autenticação e CRUD |
-| Denys Wenceslau *(completar nome completo)* | [@denyswenceslau1](https://github.com/denyswenceslau1) | Estado global e formulários |
-| Gabriel Ataídes *(completar nome completo)* | [@ataidesgabrielsousa-cyber](https://github.com/ataidesgabrielsousa-cyber) | Componentes e telas (UI/UX) |
-| Gustavo Simões Dantas | [@GustavoSimoesDantas](https://github.com/GustavoSimoesDantas) | Recursos nativos (data, câmera, haptics) e documentação |
+| Kaio Daniel | [@KaioSantoss](https://github.com/KaioSantoss) | Base do projeto, tema e navegação |
+| Ygor Farias | [@Yguin77](https://github.com/Yguin77) | Firebase: autenticação e CRUD |
+| Denys Wenceslau | [@denyswenceslau1](https://github.com/denyswenceslau1) | Estado global e formulários |
+| Gabriel Ataides | [@ataidesgabrielsousa-cyber](https://github.com/ataidesgabrielsousa-cyber) | Componentes e telas (UI/UX) |
+| Gustavo Simões | [@GustavoSimoesDantas](https://github.com/GustavoSimoesDantas) | Recursos nativos (data, câmera, haptics) e documentação |
 
 ---
 
