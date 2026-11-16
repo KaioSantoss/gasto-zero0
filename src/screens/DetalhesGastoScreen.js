@@ -5,6 +5,8 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   Alert,
+  Image,
+  ScrollView,
   Platform,
   StyleSheet,
 } from 'react-native';
@@ -84,7 +86,7 @@ export default function DetalhesGastoScreen({ route, navigation }) {
   }
 
   return (
-    <View style={styles.tela}>
+    <ScrollView style={styles.tela} contentContainerStyle={styles.conteudo}>
       <View style={styles.hero}>
         <Text style={styles.heroIcone}>{ICONES[gasto.categoria] ?? '📦'}</Text>
         <Text style={styles.heroValor}>{moeda(gasto.valor)}</Text>
@@ -95,6 +97,13 @@ export default function DetalhesGastoScreen({ route, navigation }) {
         <Linha rotulo="Categoria" valor={gasto.categoria} />
         <Linha rotulo="Data" valor={dataBR(gasto.data)} ultima />
       </View>
+
+      {!!gasto.foto && (
+        <View style={styles.cartaoFoto}>
+          <Text style={styles.linhaRotulo}>Foto do recibo</Text>
+          <Image source={{ uri: gasto.foto }} style={styles.foto} resizeMode="contain" />
+        </View>
+      )}
 
       {!!erro && <Text style={styles.erro}>{erro}</Text>}
 
@@ -109,7 +118,7 @@ export default function DetalhesGastoScreen({ route, navigation }) {
           <Text style={styles.botaoExcluirTexto}>Excluir gasto</Text>
         )}
       </TouchableOpacity>
-    </View>
+    </ScrollView>
   );
 }
 
@@ -123,7 +132,8 @@ function Linha({ rotulo, valor, ultima }) {
 }
 
 const styles = StyleSheet.create({
-  tela: { flex: 1, backgroundColor: fundo, padding: 16 },
+  tela: { flex: 1, backgroundColor: fundo },
+  conteudo: { padding: 16, paddingBottom: 32 },
   centro: { flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: fundo },
   hero: {
     backgroundColor: verde,
@@ -145,6 +155,15 @@ const styles = StyleSheet.create({
   linhaBorda: { borderBottomWidth: 1, borderBottomColor: '#e8ecea' },
   linhaRotulo: { fontSize: 14, color: '#7a8984' },
   linhaValor: { fontSize: 15, fontWeight: '600', color: texto },
+
+  cartaoFoto: {
+    backgroundColor: '#fff',
+    borderRadius: 16,
+    padding: 20,
+    marginTop: 16,
+    gap: 12,
+  },
+  foto: { width: '100%', height: 320, borderRadius: 12, backgroundColor: fundo },
 
   erro: { color: '#c62828', textAlign: 'center', marginTop: 16 },
   botaoExcluir: {

@@ -21,6 +21,9 @@ import {
   formatarData,
   dataParaISO,
 } from '../utils/validacao';
+import SeletorData from '../components/SeletorData';
+import FotoRecibo from '../components/FotoRecibo';
+import { vibrarSelecao, vibrarLeve, vibrarSucesso, vibrarErro } from '../utils/haptics';
 
 const ICONES = {
   Alimentação: '🍽️',
@@ -44,16 +47,37 @@ export default function NovoGastoScreen() {
   const [valor, setValor] = useState('');
   const [descricao, setDescricao] = useState('');
   const [categoria, setCategoria] = useState('');
-  const [data, setData] = useState(formatarData(new Date()));
+  const [data, setData] = useState(new Date()); // DATA: objeto Date, começa em hoje
+  const [foto, setFoto] = useState(null); // FOTO: data URI do recibo (opcional)
   const [erros, setErros] = useState({});
   const [erroGeral, setErroGeral] = useState('');
   const [salvando, setSalvando] = useState(false);
 
+  function escolherCategoria(cat) {
+    vibrarSelecao();
+    setCategoria(cat);
+  }
+
+  function escolherData(novaData) {
+    vibrarSelecao();
+    setData(novaData);
+  }
+
+  function mudarFoto(novaFoto) {
+    vibrarLeve();
+    setErroGeral('');
+    setFoto(novaFoto);
+  }
+
   async function salvar() {
     setErroGeral('');
-    const errosEncontrados = validarGasto({ descricao, valor, categoria, data });
+    const dataTexto = formatarData(data); // "DD/MM/AAAA", formato que o validador espera
+    const errosEncontrados = validarGasto({ descricao, valor, categoria, data: dataTexto });
     setErros(errosEncontrados);
-    if (Object.keys(errosEncontrados).length > 0) return;
+    if (Object.keys(errosEncontrados).length > 0) {
+      vibrarErro();
+      return;
+    }
 
     setSalvando(true);
     try {
@@ -61,11 +85,14 @@ export default function NovoGastoScreen() {
         descricao: descricao.trim(),
         valor: converterValor(valor),
         categoria,
-        data: dataParaISO(data),
+        data: dataParaISO(dataTexto),
         userId: user.uid,
+        ...(foto ? { foto } : {}),
       });
+      vibrarSucesso();
       navigation.goBack();
     } catch (e) {
+      vibrarErro();
       console.log('Erro ao salvar:', e.code, e.message);
       setErroGeral(`Não foi possível salvar (${e.code ?? e.message}).`);
     } finally {
@@ -123,7 +150,7 @@ export default function NovoGastoScreen() {
                   key={cat}
                   activeOpacity={0.8}
                   style={[styles.chip, ativa && styles.chipAtivo]}
-                  onPress={() => setCategoria(cat)}
+                  onPress={() => escolherCategoria(cat)}
                 >
                   <Text style={styles.chipIcone}>{ICONES[cat] ?? '📦'}</Text>
                   <Text style={[styles.chipTexto, ativa && styles.chipTextoAtivo]}>
@@ -135,20 +162,14 @@ export default function NovoGastoScreen() {
           </View>
           {!!erros.categoria && <Text style={styles.erro}>{erros.categoria}</Text>}
 
+          {/* Bloco DATA */}
           <Text style={styles.label}>Data</Text>
-          <View style={[styles.dataLinha, erros.data && styles.inputErro]}>
-            <Text style={styles.dataIcone}>📅</Text>
-            <TextInput
-              style={styles.dataInput}
-              value={data}
-              onChangeText={setData}
-              placeholder="DD/MM/AAAA"
-              placeholderTextColor="#9aa5a1"
-              keyboardType="numbers-and-punctuation"
-              maxLength={10}
-            />
-          </View>
+          <SeletorData valor={data} onChange={escolherData} erro={erros.data} />
           {!!erros.data && <Text style={styles.erro}>{erros.data}</Text>}
+
+          {/* Bloco FOTO */}
+          <Text style={styles.label}>Foto do recibo (opcional)</Text>
+          <FotoRecibo foto={foto} onChange={mudarFoto} onErro={setErroGeral} />
 
           {!!erroGeral && <Text style={[styles.erro, styles.erroGeral]}>{erroGeral}</Text>}
         </View>
@@ -247,18 +268,6 @@ const styles = StyleSheet.create({
   chipIcone: { fontSize: 15, marginRight: 6 },
   chipTexto: { color: texto, fontSize: 14 },
   chipTextoAtivo: { color: '#fff', fontWeight: '700' },
-
-  dataLinha: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: fundo,
-    borderWidth: 1,
-    borderColor: '#e1e6e4',
-    borderRadius: 10,
-    paddingHorizontal: 14,
-  },
-  dataIcone: { fontSize: 16, marginRight: 10 },
-  dataInput: { flex: 1, paddingVertical: 12, fontSize: 16, color: texto, outlineStyle: 'none' },
 
   rodape: {
     flexDirection: 'row',
